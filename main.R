@@ -38,6 +38,17 @@ economic_data_na <- economic_data_na %>%
                 arrange(desc(Overall_Score))
 economic_data_na
 
+#-Section 2 :
+#--------> Part-1: R to build the Scatter matrix plot using ggpairs()
+
+#Step-1: Installing ggPlot() and GGally() package for ploting scatter matrix plot
+
+library(ggplot2)
+library(GGally)
+
+#Step-2: Using ggpairs() of above library in data sets after removing NA values & sorting 
+ggpairs(economic_data_na)
+
 
 
 
