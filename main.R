@@ -16,6 +16,7 @@ economic_data = read_csv("data/index_of_economic_freedom_2024.csv")
 economic_data
 #view all to columns
 colnames(economic_data)
+glimpse(economic_data)
 
 #Step 1: checking all NA values in data sets using Summary() method
 summary(economic_data)
@@ -47,7 +48,13 @@ library(ggplot2)
 library(GGally)
 
 #Step-2: Using ggpairs() of above library in data sets after removing NA values & sorting 
-ggpairs(economic_data_na)
+ggpairs(economic_data_na,
+        #columns = 7:16, # Adjust column indices to include numeric variables
+        aes(color = Region),
+        title = "Scatter Matrix of Economic Freedom Variables by Region"
+        )
+
+#Step - 3 : Single-predictor Linear Model 
 
 
 
