@@ -38,14 +38,16 @@ nrow(economic_cleaned_data)
 economic_cleaned_data = arrange(economic_cleaned_data,desc(Overall_Score))
 economic_cleaned_data
 
-#Step 5 : geting all 12 pillar data from cleaned data 
+#Step 5 : Getting all 12 pillar data from cleaned data 
 economic_pillar_data <- economic_cleaned_data %>%
                       filter(!Country %in% c('Cuba', 'North Korea')) %>%
                       select(Overall_Score : Financial_Freedom)
 glimpse(economic_pillar_data)
 nrow(economic_pillar_data)
 
-#-Section 2 :
+
+
+#-------> Section 2 :
 #--------> Part-1: R to build the Scatter matrix plot using ggpairs()
 
 #Step-1: Installing ggPlot() and GGally() package for ploting scatter matrix plot
@@ -106,14 +108,31 @@ model_3 <- lm(Overall_Score ~ Property_Rights +
                               Fiscal_Health, 
                           data = economic_pillar_data)
 summary(model_3)
+autoplot(model_3)
 
 
-AIC(model_1, model_2, model_3)
+#--> Step-4 = The best linear model using any subset of variables from Pillar #1 and Pillar #2 only.
+model_4 = lm(Overall_Score ~  Property_Rights + Government_Integrity + Judicial_Effectiveness + #pillar-1
+                              Tax_Burden + Government_Spending + Fiscal_Health, #pillar-2
+                              data = economic_pillar_data )  
+summary(model_4)
+
+autoplot(model_4)
 
 
+#----> Step-5: by region and any subset variable at most two variable of pillar 1 and 2 and 
+model_5 = lm(Overall_Score ~ Government_Integrity+Judicial_Effectiveness+ #Pillar-1
+             Government_Spending + Fiscal_Health +   #Pillar-2
+             Business_Freedom + Labor_Freedom +      #Pillar-3
+             Trade_Freedom + Investment_Freedom,     # Pillar-4 
+             
+             data = economic_pillar_data ) 
+summary(model_5)
 
+#diagonist-plit
+autoplot(model_5)
 
-
+AIC(model_1, model_2, model_3, model_4, model_5)
 
 
 
