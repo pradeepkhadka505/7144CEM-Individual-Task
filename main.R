@@ -35,9 +35,12 @@ summary(economic_data_na)
 nrow(economic_data_na)
 
 #step 4 : Sorting data sets using overall_score highest to lowest
-economic_data_na <- economic_data_na %>%
-                arrange(desc(Overall_Score))
-economic_data_na
+#economic_data_na <- economic_data_na %>%
+#                arrange(desc(Overall_Score))
+#economic_data_na
+
+economic_data_na = arrange(economic_data_na,desc(Overall_Score))
+economic_data_na 
 
 #-Section 2 :
 #--------> Part-1: R to build the Scatter matrix plot using ggpairs()
@@ -49,9 +52,10 @@ library(GGally)
 
 #Step-2: Using ggpairs() of above library in data sets after removing NA values & sorting 
 ggpairs(economic_data_na,
-        #columns = 7:16, # Adjust column indices to include numeric variables
+        columns = 4:12, # Adjust column indices to include numeric variables
         aes(color = Region),
-        title = "Scatter Matrix of Economic Freedom Variables by Region"
+        title = "Scatter Matrix of Economic Freedom Variables by Region",
+        cardinality_threshold = 200
         )
 
 #Step - 3 : Single-predictor Linear Model 
