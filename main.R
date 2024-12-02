@@ -38,10 +38,16 @@ nrow(economic_cleaned_data)
 economic_cleaned_data = arrange(economic_cleaned_data,desc(Overall_Score))
 economic_cleaned_data
 
-#Step 5 : Getting all 12 pillar data from cleaned data 
+#Step 5 : Getting all cleaned data after removing Cuba & North Korea
+economic_cleaned_data <- economic_cleaned_data %>%
+                      filter(!Country %in% c('Cuba', 'North Korea'))
+economic_cleaned_data
+
+#Step 6 : Getting all 12 pillar data from cleaned data 
 economic_pillar_data <- economic_cleaned_data %>%
-                      filter(!Country %in% c('Cuba', 'North Korea')) %>%
                       select(Overall_Score : Financial_Freedom)
+
+#transpose version of print()
 glimpse(economic_pillar_data)
 nrow(economic_pillar_data)
 
@@ -92,11 +98,31 @@ library(olsrr)
 #Step-1 = linear model using only government spending and labor freedom as predictors.
 model_1 = lm(Overall_Score ~ Government_Spending + Labor_Freedom, data = economic_pillar_data)
 model_1
+library(car)
+vif(model_1)
 summary(model_1)
+
+#R-Squared = 0.3958      ##### model-1
+#Intercept =       30.58969   
+#predictor(x) = 
+      #--> Government_Spending -0.06461 *
+      #--> Labor_Freedom        0.57853 ***
+
+ggplot(data=economic_pillar_data, aes(x=(Government_Spending + Labor_Freedom), y=Overall_Score)) +
+  geom_point() +
+  geom_smooth(method=lm, se=TRUE)
 
 #Step-2 = The best two-predictor model using any of the 12 pillar variables
 model_2 <- lm(Overall_Score ~ Property_Rights + Tax_Burden, data = economic_pillar_data)
 summary(model_2)
+vif(model_2)
+
+#----> scatter pot for fitted value 
+ggplot(data=economic_pillar_data, aes(x=(Property_Rights + Tax_Burden), y=Overall_Score)) +
+  geom_point() +
+  geom_smooth(method=lm, se=TRUE)
+
+#Bi-plot of model-3
 
 #Step-3 = The best four-predictor model using any of the 12 pillar variables
 model_3 <- lm(Overall_Score ~ Property_Rights + 
@@ -105,6 +131,13 @@ model_3 <- lm(Overall_Score ~ Property_Rights +
                               Fiscal_Health, 
                           data = economic_pillar_data)
 summary(model_3)
+vif(model_3)
+
+ggplot(data=economic_pillar_data, aes(x=(Property_Rights + Tax_Burden + Trade_Freedom + Fiscal_Health), y=Overall_Score)) +
+  geom_point() +
+  geom_smooth(method=lm, se=TRUE)
+
+#Bi-plot of model-3
 autoplot(model_3)
 
 
@@ -114,26 +147,45 @@ model_4 = lm(Overall_Score ~  Property_Rights + Government_Integrity + Judicial_
                               data = economic_pillar_data )  
 summary(model_4)
 
+
+vif(model_4) #multi-colinarity and if correlation value above 5 then model is not significant 
+
+ggplot(data=economic_pillar_data, aes(x=(Property_Rights + Government_Integrity +
+                                         Judicial_Effectiveness + #pillar-1
+                                         Tax_Burden + Government_Spending + Fiscal_Health), y=Overall_Score)) +
+                                         geom_point() +
+                                         geom_smooth(method=lm, se=TRUE)
 autoplot(model_4)
 
 
 #----> Step-5: by region and any subset variable at most two variable of pillar 1 and 2 and 
-model_5 = lm(Overall_Score ~ Government_Integrity+Judicial_Effectiveness+ #Pillar-1
+
+economic_pillar_data <- economic_cleaned_data %>%
+  select(Region : Financial_Freedom)
+
+economic_pillar_data
+
+
+model_5 = lm(Overall_Score ~ Region + Government_Integrity + Judicial_Effectiveness+ #Pillar-1
                              Government_Spending + Fiscal_Health +   #Pillar-2
                              Business_Freedom + Labor_Freedom +      #Pillar-3
                              Trade_Freedom + Investment_Freedom,     # Pillar-4 
-             
                             data = economic_pillar_data ) 
 summary(model_5)
 
+vif (model_5)
+
+ggplot(data = economic_pillar_data, 
+       aes( x =(Government_Integrity + Judicial_Effectiveness +Government_Spending + Fiscal_Health +
+               Business_Freedom + Labor_Freedom +      
+               Trade_Freedom + Investment_Freedom), y=Overall_Score)) +
+               geom_point() +geom_smooth(method=lm, se=TRUE)
 
 #Di agonist-plot
 autoplot(model_5)
 
 AIC(model_1, model_2, model_3, model_4, model_5)
-
-
-
+#if AIC value of the model is less the among all then this will be the best model
 
 
 
