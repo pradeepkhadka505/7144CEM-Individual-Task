@@ -52,12 +52,10 @@ nrow(economic_pillar_data)
 
 #Step-1: Installing ggPlot() and GGally() package for ploting scatter matrix plot
 
-library(ggplot2)
 library(GGally)
 
 #Step-2: Using ggpairs() of above library in data sets after removing NA values & sorting 
 ggpairs(economic_pillar_data,
-        aes(),
         title = "Scatter Matrix of Economic Freedom Variables by Region",
         )
 
@@ -73,9 +71,8 @@ library(corrplot)
 corrplot(correlation_matrix, method = "color", type = "upper", tl.cex = 0.8, addCoef.col = "black")
 
 #Step - 3 : Single-predictor Linear Model 
-model = lm(Overall_Score~Property_Rights , data = economic_pillar_data)
-model
-summary(model)
+Single_predictor_model = lm(Overall_Score~Property_Rights , data = economic_pillar_data)
+summary(Single_predictor_model)
 
 #step -4 : To check Residual and fitted value and Normal Q-Q
 library(ggfortify)
@@ -122,14 +119,15 @@ autoplot(model_4)
 
 #----> Step-5: by region and any subset variable at most two variable of pillar 1 and 2 and 
 model_5 = lm(Overall_Score ~ Government_Integrity+Judicial_Effectiveness+ #Pillar-1
-             Government_Spending + Fiscal_Health +   #Pillar-2
-             Business_Freedom + Labor_Freedom +      #Pillar-3
-             Trade_Freedom + Investment_Freedom,     # Pillar-4 
+                             Government_Spending + Fiscal_Health +   #Pillar-2
+                             Business_Freedom + Labor_Freedom +      #Pillar-3
+                             Trade_Freedom + Investment_Freedom,     # Pillar-4 
              
-             data = economic_pillar_data ) 
+                            data = economic_pillar_data ) 
 summary(model_5)
 
-#diagonist-plit
+
+#Di agonist-plot
 autoplot(model_5)
 
 AIC(model_1, model_2, model_3, model_4, model_5)
